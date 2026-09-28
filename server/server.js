@@ -78,7 +78,7 @@ function requireAdmin(req, res, next) {
 
 
 // Saare orders fetch karna
-app.get("/api/orders", (req, res) => {
+app.get("/api/orders", requireAdmin, (req, res) => {
     const orders = db.prepare(`
         SELECT
             orderId,
