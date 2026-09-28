@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SMR Order Tracking</title>
+
+    <style>
+        * {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #07111f;
+    color: #f8fafc;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 70px 20px;
+}
+
+.card {
+    background: rgba(15, 29, 48, 0.95);
+    padding: 45px;
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.35);
+}
+
+h1 {
+    margin: 0;
+    font-size: 42px;
+    line-height: 1.1;
+    letter-spacing: -1px;
+}
+
+.card > p {
+    margin-top: 14px;
+    color: #94a3b8;
+    font-size: 17px;
+}
+
+.search-box {
+    display: flex;
+    gap: 12px;
+    margin-top: 30px;
+}
+
+input {
+    flex: 1;
+    padding: 16px 18px;
+    border: 1px solid #26364d;
+    border-radius: 12px;
+    font-size: 16px;
+    background: #0b1728;
+    color: white;
+    outline: none;
+}
+
+input::placeholder {
+    color: #64748b;
+}
+
+input:focus {
+    border-color: #f97316;
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.12);
+}
+
+button {
+    padding: 16px 24px;
+    border: none;
+    border-radius: 12px;
+    background: #f97316;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+button:hover {
+    background: #ea580c;
+    transform: translateY(-2px);
+}
+
+#result {
+    margin-top: 35px;
+}
+
+.order-info {
+    margin-top: 20px;
+    padding: 25px;
+    background: #0b1728;
+    border-radius: 18px;
+    border: 1px solid #1e3149;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 15px 0;
+    border-bottom: 1px solid #1e293b;
+}
+
+.row:last-child {
+    border-bottom: none;
+}
+
+.label {
+    color: #94a3b8;
+}
+
+.status {
+    display: inline-block;
+    margin-top: 25px;
+    padding: 11px 18px;
+    border-radius: 30px;
+    background: rgba(249, 115, 22, 0.12);
+    color: #fb923c;
+    border: 1px solid rgba(249, 115, 22, 0.25);
+    font-weight: bold;
+}
+
+.error {
+    color: #fca5a5;
+    background: rgba(220, 38, 38, 0.12);
+    border: 1px solid rgba(220, 38, 38, 0.25);
+    padding: 15px;
+    border-radius: 12px;
+}
+
+/* ORDER PROGRESS */
+
+.progress-section {
+    margin-top: 35px;
+}
+
+.progress-section h3 {
+    margin: 0 0 25px;
+    font-size: 20px;
+}
+
+.progress-list {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.progress-step {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    min-height: 80px;
+    color: #64748b;
+}
+
+.progress-step::before {
+    content: "";
+    position: absolute;
+    left: 17px;
+    top: 36px;
+    width: 2px;
+    height: 44px;
+    background: #24364d;
+}
+
+.progress-step:last-child::before {
+    display: none;
+}
+
+.progress-step > span {
+    position: relative;
+    z-index: 2;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+    background: #17283d;
+    border: 2px solid #30445d;
+
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.progress-step strong {
+    display: block;
+    color: #94a3b8;
+    font-size: 15px;
+    margin-top: 2px;
+}
+
+.progress-step small {
+    display: block;
+    margin-top: 6px;
+    color: #64748b;
+    line-height: 1.5;
+}
+
+/* ACTIVE STAGE */
+
+.progress-step.active {
+    color: white;
+}
+
+.progress-step.active > span {
+    background: #f97316;
+    border-color: #f97316;
+    color: white;
+    box-shadow: 0 0 0 5px rgba(249, 115, 22, 0.12);
+}
+
+.progress-step.active::before {
+    background: #f97316;
+}
+
+.progress-step.active strong {
+    color: #f8fafc;
+}
+
+@media (max-width: 600px) {
+
+    .container {
+        padding: 30px 15px;
+    }
+
+    .card {
+        padding: 25px 20px;
+        border-radius: 18px;
+    }
+
+    h1 {
+        font-size: 32px;
+    }
+
+    .card > p {
+        font-size: 15px;
+    }
+
+    .search-box {
+        flex-direction: column;
+    }
+
+    button {
+        width: 100%;
+    }
+
+    .row {
+        flex-direction: column;
+        gap: 5px;
+    }
+}
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="card">
+
+            <h1>SMR Order Tracking</h1>
+
+            <p>
+                Enter your Order ID to check your order status.
+            </p>
+
+            <div class="search-box">
+
+                <input
+                    type="text"
+                    id="orderId"
+                    placeholder="Example: SMR-2026-001"
+                >
+
+                <button onclick="trackOrder()">
+                    Track Order
+                </button>
+
+            </div>
+
+            <div id="result"></div>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        async function trackOrder() {
+
+            const orderId = document
+                .getElementById("orderId")
+                .value
+                .trim();
+
+            const result = document.getElementById("result");
+
+            if (!orderId) {
+
+                result.innerHTML = `
+                    <div class="error">
+                        Please enter an Order ID.
+                    </div>
+                `;
+
+                return;
+            }
+
+            result.innerHTML = "Loading order...";
+
+            try {
+
+                const response = await fetch(
+                    `/api/orders/${orderId}`
+                );
+
+                const order = await response.json();
+
+                if (!response.ok) {
+
+                    result.innerHTML = `
+                        <div class="error">
+                            ${order.message}
+                        </div>
+                    `;
+
+                    return;
+                }
+
+                result.innerHTML = `
+
+                    <div class="order-info">
+
+                        <div class="row">
+                            <span class="label">Order ID</span>
+                            <strong>${order.orderId}</strong>
+                        </div>
+
+                        <div class="row">
+                            <span class="label">Client</span>
+                            <strong>${order.clientName}</strong>
+                        </div>
+
+                        <div class="row">
+                            <span class="label">Product</span>
+                            <strong>${order.productType}</strong>
+                        </div>
+
+                        <div class="row">
+                            <span class="label">Dimensions</span>
+                            <strong>${order.dimensions}</strong>
+                        </div>
+
+                        <div class="row">
+                            <span class="label">Estimated Delivery</span>
+                            <strong>${order.estimatedDelivery}</strong>
+                        </div>
+
+                        <div class="status">
+    Current Status: ${order.status}
+</div>
+
+<div class="progress-section">
+
+    <h3>Order Progress</h3>
+
+    <div class="progress-list">
+
+        <div class="progress-step ${order.stage >= 1 ? "active" : ""}">
+            <span>1</span>
+            <div>
+                <strong>Order Received</strong>
+                <small>Your order has been received.</small>
+            </div>
+        </div>
+
+        <div class="progress-step ${order.stage >= 2 ? "active" : ""}">
+            <span>2</span>
+            <div>
+                <strong>Design Proofing</strong>
+                <small>Design is being prepared/reviewed.</small>
+            </div>
+        </div>
+
+        <div class="progress-step ${order.stage >= 3 ? "active" : ""}">
+            <span>3</span>
+            <div>
+                <strong>In Production</strong>
+                <small>Your order is being produced.</small>
+            </div>
+        </div>
+
+        <div class="progress-step ${order.stage >= 4 ? "active" : ""}">
+            <span>4</span>
+            <div>
+                <strong>Assembly & Finishing</strong>
+                <small>Final assembly and finishing is in progress.</small>
+            </div>
+        </div>
+
+        <div class="progress-step ${order.stage >= 5 ? "active" : ""}">
+            <span>5</span>
+            <div>
+                <strong>Quality Checked</strong>
+                <small>Your order has passed quality checking.</small>
+            </div>
+        </div>
+
+        <div class="progress-step ${order.stage >= 6 ? "active" : ""}">
+            <span>6</span>
+            <div>
+                <strong>Ready / Dispatched</strong>
+                <small>Your order is ready or has been dispatched.</small>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+                    </div>
+
+                `;
+
+            } catch (error) {
+
+                result.innerHTML = `
+                    <div class="error">
+                        Could not connect to the server.
+                    </div>
+                `;
+
+                console.error(error);
+            }
+        }
+
+    </script>
+
+</body>
+</html>

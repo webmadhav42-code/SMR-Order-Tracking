@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SMR Admin Login</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #07111f;
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+
+        .login-box {
+            width: 90%;
+            max-width: 420px;
+            padding: 35px;
+            background: #0d1b2a;
+            border: 1px solid #1d3557;
+            border-radius: 18px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+        }
+
+        .login-box h1 {
+            margin-bottom: 8px;
+            font-size: 30px;
+        }
+
+        .login-box p {
+            color: #9fb3c8;
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #dce6f2;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px;
+            margin-bottom: 20px;
+            border: 1px solid #294866;
+            border-radius: 10px;
+            background: #091522;
+            color: white;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #ff8c42;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            background: #ff8c42;
+            color: #111;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        #message {
+            margin-top: 18px;
+            text-align: center;
+            color: #ff8c42;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-box">
+
+        <h1>SMR Admin</h1>
+
+        <p>Login to manage customer orders.</p>
+
+        <form id="loginForm">
+
+            <label for="username">Username</label>
+            <input
+                type="text"
+                id="username"
+                placeholder="Enter username"
+                required
+            >
+
+            <label for="password">Password</label>
+            <input
+                type="password"
+                id="password"
+                placeholder="Enter password"
+                required
+            >
+
+            <button type="submit">
+                Login
+            </button>
+
+        </form>
+
+        <div id="message"></div>
+
+    </div>
+
+    <script>
+        document
+            .getElementById("loginForm")
+            .addEventListener("submit", async function(event) {
+
+                event.preventDefault();
+
+                const username =
+                    document.getElementById("username").value.trim();
+
+                const password =
+                    document.getElementById("password").value;
+
+                const message =
+                    document.getElementById("message");
+
+                try {
+
+                    const response = await fetch("/api/admin/login", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            username,
+                            password
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        message.textContent =
+                            data.message || "Login failed.";
+                        return;
+                    }
+
+                    window.location.href = "/admin/";
+
+                } catch (error) {
+
+                    console.error(error);
+
+                    message.textContent =
+                        "Could not connect to the server.";
+                }
+
+            });
+    </script>
+
+</body>
+</html>

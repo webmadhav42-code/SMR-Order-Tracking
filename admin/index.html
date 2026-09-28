@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SMR Admin Dashboard</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #0b1220;
+            color: white;
+            min-height: 100vh;
+        }
+
+        .header {
+            padding: 25px 40px;
+            background: #111a2e;
+            border-bottom: 1px solid #24304a;
+        }
+
+        .header h1 {
+            font-size: 28px;
+        }
+
+        .header p {
+            color: #94a3b8;
+            margin-top: 6px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 40px 20px;
+        }
+
+        .card {
+            background: #111a2e;
+            border: 1px solid #24304a;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .card h2 {
+            margin-bottom: 20px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 15px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 13px 15px;
+            border-radius: 10px;
+            border: 1px solid #334155;
+            background: #0b1220;
+            color: white;
+            outline: none;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #f97316;
+        }
+
+        button {
+            padding: 13px 20px;
+            border: none;
+            border-radius: 10px;
+            background: #f97316;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #ea580c;
+        }
+
+        #message {
+            margin-top: 15px;
+            color: #94a3b8;
+        }
+
+        .orders-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .badge {
+            background: #172554;
+            color: #60a5fa;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
+        }
+
+        th,
+        td {
+            padding: 16px 12px;
+            text-align: left;
+            border-bottom: 1px solid #24304a;
+        }
+
+        th {
+            color: #94a3b8;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+
+        td {
+            color: #e2e8f0;
+        }
+
+        .status {
+            color: #fb923c;
+        }
+
+        @media (max-width: 800px) {
+            .header {
+                padding: 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 25px 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="header">
+        <h1>SMR Enterprises</h1>
+        <p>Order Management Dashboard</p>
+    </header>
+
+    <main class="container">
+        <section class="card">
+
+    <h2>Create New Order</h2>
+
+    <div class="form-grid">
+
+        <input
+            type="text"
+            id="newOrderId"
+            placeholder="Order ID e.g. SMR-2026-003"
+        >
+
+        <input
+            type="text"
+            id="clientName"
+            placeholder="Client Name"
+        >
+
+        <input
+            type="text"
+            id="productType"
+            placeholder="Product Type"
+        >
+
+        <input
+            type="text"
+            id="dimensions"
+            placeholder="Dimensions e.g. 50 × 25 mm"
+        >
+
+        <input
+            type="date"
+            id="estimatedDelivery"
+        >
+
+        <select id="newOrderStatus">
+
+            <option value="Order Received">
+                Order Received
+            </option>
+
+            <option value="Design Proofing">
+                Design Proofing
+            </option>
+
+            <option value="In Production">
+                In Production
+            </option>
+
+        </select>
+
+        <button onclick="createOrder()">
+            Create Order
+        </button>
+
+    </div>
+
+    <p id="createMessage"></p>
+
+</section>
+
+        <section class="card">
+
+            <h2>Update Order</h2>
+
+            <div class="form-grid">
+
+                <input
+                    type="text"
+                    id="orderId"
+                    placeholder="Enter Order ID"
+                >
+
+                <select id="status">
+                    <option value="Order Received">
+                        Order Received
+                    </option>
+
+                    <option value="Design Proofing">
+                        Design Proofing
+                    </option>
+
+                    <option value="In Production">
+                        In Production
+                    </option>
+
+                    <option value="Assembly & Finishing">
+                        Assembly & Finishing
+                    </option>
+
+                    <option value="Quality Checked Passed">
+                        Quality Checked Passed
+                    </option>
+
+                    <option value="Ready for Pickup / Dispatched">
+                        Ready for Pickup / Dispatched
+                    </option>
+                </select>
+
+                
+        <select id="stage">
+
+    <option value="1">
+        Stage 1 — Order Received
+    </option>
+
+    <option value="2">
+        Stage 2 — Design Proofing
+    </option>
+
+    <option value="3">
+        Stage 3 — In Production
+    </option>
+
+    <option value="4">
+        Stage 4 — Assembly & Finishing
+    </option>
+
+    <option value="5">
+        Stage 5 — Quality Checked
+    </option>
+
+    <option value="6">
+        Stage 6 — Ready / Dispatched
+    </option>
+
+</select>
+
+                <button onclick="updateOrder()">
+                    Update Status
+                </button>
+
+            </div>
+
+            <p id="message"></p>
+
+        </section>
+
+
+        <section class="card">
+
+            <div class="orders-title">
+                <h2>Orders</h2>
+
+                <span class="badge" id="orderCount">
+                    Loading...
+                </span>
+            </div>
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+                        <tr>
+    <th>Order ID</th>
+    <th>Client</th>
+    <th>Product</th>
+    <th>Delivery</th>
+    <th>Status</th>
+                           <th>Action</th>
+                         </tr>
+                    </thead>
+
+                    <tbody id="ordersTable">
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script>
+        async function createOrder() {
+
+    const orderId =
+        document.getElementById("newOrderId").value.trim();
+
+    const clientName =
+        document.getElementById("clientName").value.trim();
+
+    const productType =
+        document.getElementById("productType").value.trim();
+
+    const dimensions =
+        document.getElementById("dimensions").value.trim();
+
+    const estimatedDelivery =
+        document.getElementById("estimatedDelivery").value;
+
+    const status =
+        document.getElementById("newOrderStatus").value;
+
+    const message =
+        document.getElementById("createMessage");
+
+
+    if (
+        !orderId ||
+        !clientName ||
+        !productType ||
+        !dimensions ||
+        !estimatedDelivery
+    ) {
+
+        message.textContent =
+            "Please fill all fields.";
+
+        return;
+    }
+
+
+    try {
+
+        const response = await fetch("/api/orders", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+
+                orderId: orderId,
+                clientName: clientName,
+                productType: productType,
+                dimensions: dimensions,
+                estimatedDelivery: estimatedDelivery,
+                status: status,
+                stage: 0,
+                approvalPending: false
+
+            })
+
+        });
+
+
+        const data = await response.json();
+
+
+        if (!response.ok) {
+
+            message.textContent =
+                data.message || "Could not create order.";
+
+            return;
+        }
+
+
+        message.textContent =
+            "New order created successfully! ✅";
+
+
+        // Clear form
+        document.getElementById("newOrderId").value = "";
+        document.getElementById("clientName").value = "";
+        document.getElementById("productType").value = "";
+        document.getElementById("dimensions").value = "";
+        document.getElementById("estimatedDelivery").value = "";
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        message.textContent =
+            "Could not connect to the server.";
+
+    }
+
+}
+
+        async function loadOrders() {
+
+    try {
+
+        const response = await fetch("/api/orders");
+
+        if (!response.ok) {
+            throw new Error("Failed to load orders");
+        }
+
+        const orders = await response.json();
+
+        const table = document.getElementById("ordersTable");
+
+        table.innerHTML = "";
+
+        orders.forEach((order) => {
+
+            const row = document.createElement("tr");
+
+            row.innerHTML = `
+                <td>${order.orderId}</td>
+                <td>${order.clientName}</td>
+                <td>${order.productType}</td>
+                <td>${order.estimatedDelivery}</td>
+                <td class="status">${order.status}</td>
+                <td>
+                    <button onclick="deleteOrder('${order.orderId}')">
+                        Delete
+                    </button>
+                </td>
+            `;
+
+            table.appendChild(row);
+
+        });
+
+        document.getElementById("orderCount").textContent =
+            `${orders.length} Orders`;
+
+    } catch (error) {
+
+        console.error(error);
+
+        document.getElementById("ordersTable").innerHTML = `
+            <tr>
+                <td colspan="6">
+                    Could not load orders.
+                </td>
+            </tr>
+        `;
+
+    }
+
+}
+
+
+async function deleteOrder(orderId) {
+
+    const confirmDelete = confirm(
+        `Are you sure you want to delete ${orderId}?`
+    );
+
+    if (!confirmDelete) {
+        return;
+    }
+
+    try {
+
+        const response = await fetch(
+            `/api/orders/${orderId}`,
+            {
+                method: "DELETE"
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+
+            alert(data.message || "Delete failed.");
+
+            return;
+        }
+
+        alert("Order deleted successfully! ✅");
+
+        loadOrders();
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert("Could not connect to the server.");
+
+    }
+
+}
+
+        async function updateOrder() {
+
+            const orderId =
+                document.getElementById("orderId").value.trim();
+
+            const status =
+                document.getElementById("status").value;
+
+            const stage =
+                Number(document.getElementById("stage").value);
+
+            const message =
+                document.getElementById("message");
+
+
+            if (!orderId) {
+
+                message.textContent =
+                    "Please enter an Order ID.";
+
+                return;
+            }
+
+
+            try {
+
+                const response = await fetch(
+                    `/api/orders/${orderId}`,
+                    {
+                        method: "PATCH",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            status: status,
+                            stage: stage
+                        })
+                    }
+                );
+
+
+                const data = await response.json();
+
+
+                if (!response.ok) {
+
+                    message.textContent =
+                        data.message || "Update failed.";
+
+                    return;
+                }
+
+
+                message.textContent =
+                    "Order updated successfully! ✅";
+
+                loadOrders();
+
+
+            } catch (error) {
+
+                console.error(error);
+
+                message.textContent =
+                    "Could not connect to the server.";
+
+            }
+
+        }
+
+
+        loadOrders();
+
+    </script>
+
+</body>
+</html>
