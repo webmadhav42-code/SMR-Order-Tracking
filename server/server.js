@@ -256,6 +256,6 @@ app.delete("/api/orders/:orderId", requireAdmin, (req, res) => {
 });
 
 
-app.listen(PORT, () => {
-    console.log(`SMR server running at http://localhost:${PORT}`);
+app.listen(PORT, "0.0.0.0", () => {
+    console.log(`SMR server running on port ${PORT}`);
 });
